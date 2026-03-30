@@ -1,7 +1,9 @@
 "use client";
 
 import Image from "next/image";
+import { useState } from "react";
 import isMobile from "../hooks/is-mobile";
+import { localDateKey, parseLocalDateKey } from "../lib/bud-care";
 
 export type FertilizePlan = {
   plannedDate: string;
@@ -26,10 +28,26 @@ export type BudDisplay = {
   lastWaterWeekStartKey: string | null;
 };
 
-function hueFromId(id: string): number {
-  let h = 0;
-  for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0;
-  return h % 360;
+function formatShortPlanDate(iso: string): string {
+  const d = parseLocalDateKey(iso);
+  if (!d) return iso;
+  return d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+}
+
+function hoverInfoLines(bud: BudDisplay): string[] {
+  const today = localDateKey(new Date());
+  const lines: string[] = [];
+  if (bud.lastChattedTodayAt === today) {
+    lines.push("Chatted today");
+  }
+  if (bud.fertilizePlan) {
+    const { plannedDate, note } = bud.fertilizePlan;
+    if (plannedDate >= today) {
+      const tail = note.trim() ? ` — ${note.trim()}` : "";
+      lines.push(`Visit planned ${formatShortPlanDate(plannedDate)}${tail}`);
+    }
+  }
+  return lines;
 }
 
 type FlowerProps = {
@@ -49,12 +67,27 @@ export default function Flower({
   onOpenCare,
   onAnchorChange,
 }: FlowerProps) {
-  const hue = hueFromId(bud.id);
   const IMAGE_PX = isMobile() ? 100 : 600;
   const selected = careOpen;
+  const [hovered, setHovered] = useState(false);
+  const showHoverExtras = hovered && !careOpen;
+  const glowActive = selected || showHoverExtras;
+
+  const glowStyle = glowActive
+    ? {
+        filter:
+          "drop-shadow(0 0 6px var(--flower-glow-inner)) drop-shadow(0 0 20px var(--flower-glow-outer))",
+      }
+    : undefined;
+
+  const hoverLines = hoverInfoLines(bud);
 
   return (
-    <div className="flex flex-col items-center gap-2">
+    <div
+      className="relative flex flex-col items-center gap-2"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
       <div
         ref={onAnchorChange}
         className="relative hover:cursor-pointer"
@@ -92,31 +125,42 @@ export default function Flower({
             width={IMAGE_PX}
             height={IMAGE_PX}
             className="inline-block h-22 w-22 md:h-48 md:w-48 object-contain"
-            style={
-              selected
-                ? {
-                    filter: `drop-shadow(0 0 6px hsla(${hue}, 80%, 70%, 0.9)) drop-shadow(0 0 20px hsla(${hue}, 70%, 60%, 0.5))`,
-                  }
-                : undefined
-            }
+            style={glowStyle}
           />
         </div>
       </div>
-      <h2 className="text-center text-base font-semibold">
+      <h2 className="text-center text-lg font-semibold">
         {bud.name}
       </h2>
-      <div className="flex w-full min-w-[2rem] max-w-[6rem] flex-col gap-1">
-        <div
-          className="h-1.5 w-full overflow-hidden rounded-full bg-neutral-100"
-          role="status"
-          aria-label={`Health ${Math.round(bud.health)} percent. Connect every ${bud.seeEveryDays} days`}
-        >
+      <div className="flex w-full min-w-[2rem] max-w-[14rem] flex-col gap-1">
+        <div className="flex w-full items-center gap-1.5">
           <div
-            className="h-full rounded-full bg-emerald-500/90 transition-all duration-300"
-            style={{ width: `${Math.round(bud.health)}%` }}
-          />
+            className="h-1.5 min-w-0 flex-1 overflow-hidden rounded-full border border-lg border-emerald-900 bg-neutral-100/90"
+            role="status"
+            aria-label={`Health ${Math.round(bud.health)} percent. Connect every ${bud.seeEveryDays} days`}
+          >
+            <div
+              className="h-full rounded-full bg-health-bar-sage transition-all duration-300"
+              style={{ width: `${Math.round(bud.health)}%` }}
+            />
+          </div>
+          <span
+            className={`shrink-0 tabular-nums text-xs font-medium text-emerald-900/90 ${
+              showHoverExtras ? "" : "invisible"
+            }`}
+            aria-hidden={!showHoverExtras}
+          >
+            {Math.round(bud.health)}%
+          </span>
         </div>
-        <p className="text-center text-xs text-neutral-500">
+        {showHoverExtras && hoverLines.length > 0 ? (
+          <ul className="list-inside list-disc text-left text-xs leading-snug text-neutral-600">
+            {hoverLines.map((line, i) => (
+              <li key={`${i}-${line.slice(0, 24)}`}>{line}</li>
+            ))}
+          </ul>
+        ) : null}
+        <p className="text-center text-sm text-neutral-500">
           Water every {bud.seeEveryDays} day{bud.seeEveryDays === 1 ? "" : "s"}
         </p>
       </div>
