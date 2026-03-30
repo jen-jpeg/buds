@@ -50,6 +50,16 @@ function hoverInfoLines(bud: BudDisplay): string[] {
   return lines;
 }
 
+function imageForHealth(healthyImage: string, health: number): string {
+  // Images follow the convention: `*_0.png` (healthy), `*_1.png` (sick), `*_2.png` (joever).
+  // If that convention ever changes, we fall back to the healthy image.
+  const sickImage = healthyImage.replace(/_0\.png$/, "_1.png");
+  const joeverImage = healthyImage.replace(/_0\.png$/, "_2.png");
+  if (health < 50 && joeverImage !== healthyImage) return joeverImage;
+  if (health < 70 && sickImage !== healthyImage) return sickImage;
+  return healthyImage;
+}
+
 type FlowerProps = {
   bud: BudDisplay;
   swayDuration?: number;
@@ -81,6 +91,7 @@ export default function Flower({
     : undefined;
 
   const hoverLines = hoverInfoLines(bud);
+  const imageSrc = imageForHealth(bud.healthyImage, bud.health);
 
   return (
     <div
@@ -120,7 +131,7 @@ export default function Flower({
           }}
         >
           <Image
-            src={bud.healthyImage}
+            src={imageSrc}
             alt=""
             width={IMAGE_PX}
             height={IMAGE_PX}
@@ -154,15 +165,15 @@ export default function Flower({
           </span>
         </div>
         {showHoverExtras && hoverLines.length > 0 ? (
-          <ul className="list-inside list-disc text-left text-xs leading-snug text-neutral-600">
+          <ul className="list-inside list-disc text-sm leading-snug text-neutral-600">
             {hoverLines.map((line, i) => (
               <li key={`${i}-${line.slice(0, 24)}`}>{line}</li>
             ))}
           </ul>
         ) : null}
-        <p className="text-center text-sm text-neutral-500">
-          Water every {bud.seeEveryDays} day{bud.seeEveryDays === 1 ? "" : "s"}
-        </p>
+        {(!showHoverExtras || hoverLines.length === 0) && <p className="text-center text-sm text-neutral-500">
+          See every {bud.seeEveryDays} day{bud.seeEveryDays === 1 ? "" : "s"}
+        </p>}
       </div>
     </div>
   );

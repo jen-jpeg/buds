@@ -239,18 +239,14 @@ export default function FlowerCarePopup({
       ) : (
         <div className="mt-3 flex flex-col gap-3 text-md" role="tabpanel">
           <p className="text-neutral-600">
-            Plan an in-person visit. When you meet, mark it done — the boost
-            scales with how long it has been since you last saw them and how
-            often you want to meet (every {bud.seeEveryDays} day
-            {bud.seeEveryDays === 1 ? "" : "s"}).
+            The biggest health boost comes from seeing your bud in person. Plan a visit and mark when complete!
           </p>
           <p className="text-neutral-500">
-            Last in-person:{" "}
+            Last seen:{" "}
             <span className="font-medium text-neutral-700">
               {lastVisitLabel}
             </span>
             {" · "}
-            Next boost ~<span className="font-medium">{nextBoost}</span> pts
           </p>
 
           {bud.fertilizePlan ? (
