@@ -3,7 +3,11 @@
 import Image from "next/image";
 import { useState } from "react";
 import isMobile from "../hooks/is-mobile";
-import { localDateKey, parseLocalDateKey } from "../lib/bud-care";
+import {
+  diffCalendarDays,
+  localDateKey,
+  parseLocalDateKey,
+} from "../lib/bud-care";
 
 export type FertilizePlan = {
   plannedDate: string;
@@ -34,12 +38,41 @@ function formatShortPlanDate(iso: string): string {
   return d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
 }
 
+function lastSawLine(bud: BudDisplay): string {
+  if (!bud.lastInPersonAt) {
+    return "";
+  }
+  const today = localDateKey(new Date());
+  const key = bud.lastInPersonAt;
+  if (key === today) {
+    return "Last saw today";
+  }
+  const days = diffCalendarDays(key, new Date());
+  if (days === 1) {
+    return "Last saw yesterday";
+  }
+  if (days <= 14) {
+    return `Last saw ${days} days ago`;
+  }
+  const d = parseLocalDateKey(key);
+  if (!d) {
+    return `Last saw ${key}`;
+  }
+  const y = d.getFullYear();
+  const thisYear = new Date().getFullYear();
+  if (y === thisYear) {
+    return `Last saw ${d.toLocaleDateString(undefined, { month: "short", day: "numeric" })}`;
+  }
+  return `Last saw ${d.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}`;
+}
+
 function hoverInfoLines(bud: BudDisplay): string[] {
   const today = localDateKey(new Date());
-  const lines: string[] = [];
+  let lines: string[] = [lastSawLine(bud)];
   if (bud.lastChattedTodayAt === today) {
     lines.push("Chatted today");
   }
+  lines = lines.filter(line => line !== "");
   if (bud.fertilizePlan) {
     const { plannedDate, note } = bud.fertilizePlan;
     if (plannedDate >= today) {
@@ -165,7 +198,7 @@ export default function Flower({
           </span>
         </div>
         {showHoverExtras && hoverLines.length > 0 ? (
-          <ul className="list-inside list-disc text-[1.05rem] leading-snug text-neutral-600">
+          <ul className="list-inside list-disc text-[1.05rem] absolute pt-[1.5rem] leading-snug text-neutral-600">
             {hoverLines.map((line, i) => (
               <li key={`${i}-${line.slice(0, 24)}`}>{line}</li>
             ))}

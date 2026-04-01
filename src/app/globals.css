@@ -3,6 +3,7 @@
 :root {
   --background: #ffffff;
   --foreground: #516427;
+  --secondary-foreground: #455c3b;
   /** Muted sage for friendship health bar fill */
   --health-bar-sage: #9aaa94;
   /** Light yellow glow for flower image (hover / care open) */
@@ -13,6 +14,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-secondary-foreground: var(--secondary-foreground);
   --color-health-bar-sage: var(--health-bar-sage);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
@@ -21,6 +23,7 @@
   --text-heading-2: 2.4rem;
   --text-heading-3: 1.5rem;
   --text-base: 1.32rem;
+  --font-pangolin: var(--font-pangolin);
 }
 
 @layer base {

@@ -1,11 +1,17 @@
 import type { Metadata } from "next";
-import { Schoolbell } from "next/font/google";
+import { Schoolbell, Pangolin } from "next/font/google";
 import "./globals.css";
 import NavBar from "./components/nav-bar";
 
 const schoolbell = Schoolbell({
   weight: ["400"],
   variable: "--font-schoolbell",
+  subsets: ["latin"],
+});
+
+const pangolin = Pangolin({
+  weight: ["400"],
+  variable: "--font-pangolin",
   subsets: ["latin"],
 });
 
@@ -25,7 +31,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${schoolbell.variable} h-full antialiased`}
+      className={`${schoolbell.variable} ${pangolin.variable} h-full antialiased`}
     > 
       <body className="min-h-full flex flex-col">
         <NavBar />
