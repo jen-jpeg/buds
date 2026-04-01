@@ -17,8 +17,7 @@ import {
   startOfCalendarWeekKey,
   waterPoints,
 } from "./lib/bud-care";
-
-const STORAGE_KEY = "buds-flowers-v2";
+import { BUDS_STORAGE_UPDATED_EVENT, STORAGE_KEY } from "./lib/storage";
 
 function isFertilizePlan(value: unknown): value is FertilizePlan {
   if (value === null || typeof value !== "object") return false;
@@ -127,19 +126,35 @@ export default function Home() {
   const [editTarget, setEditTarget] = useState<BudDisplay | null>(null);
   const flowerAnchorRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
-  useEffect(() => {
+  const loadFromStorage = useCallback(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
         const next = parseStoredBuds(raw);
-        if (next !== undefined && next.length > 0) {
+        if (next !== undefined) {
           setBuds(reconcileHealthDecay(next, new Date()));
+          return;
         }
       }
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      loadFromStorage();
     } finally {
       setHydrated(true);
     }
-  }, []);
+  }, [loadFromStorage]);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    const onUpdated = () => loadFromStorage();
+    window.addEventListener(BUDS_STORAGE_UPDATED_EVENT, onUpdated);
+    return () => window.removeEventListener(BUDS_STORAGE_UPDATED_EVENT, onUpdated);
+  }, [hydrated, loadFromStorage]);
 
   useEffect(() => {
     // refresh stats when the page is visible or focused
