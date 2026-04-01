@@ -13,8 +13,8 @@ import {
   clampHealth,
   fertilizeBoost,
   localDateKey,
-  startOfCalendarWeekKey,
   healthAfterDecay,
+  startOfCalendarWeekKey,
   waterPoints,
 } from "./lib/bud-care";
 
@@ -52,8 +52,7 @@ function parseBud(value: unknown): BudDisplay | undefined {
   if (o.fertilizePlan !== null && o.fertilizePlan !== undefined) {
     if (isFertilizePlan(o.fertilizePlan)) fertilizePlan = o.fertilizePlan;
   }
-  const lastChattedTodayAt =
-    typeof o.lastChattedTodayAt === "string" ? o.lastChattedTodayAt : null;
+  const lastChattedAt = typeof o.lastChattedAt === "string" ? o.lastChattedAt : null;
   const lastWaterWeekStartKey =
     typeof o.lastWaterWeekStartKey === "string"
       ? o.lastWaterWeekStartKey
@@ -74,7 +73,7 @@ function parseBud(value: unknown): BudDisplay | undefined {
     healthUpdatedAt,
     lastInPersonAt,
     fertilizePlan,
-    lastChattedTodayAt,
+    lastChattedAt,
     lastWaterWeekStartKey,
   };
 }
@@ -98,14 +97,14 @@ const defaultCareFields = (): Pick<
   | "healthUpdatedAt"
   | "lastInPersonAt"
   | "fertilizePlan"
-  | "lastChattedTodayAt"
+  | "lastChattedAt"
   | "lastWaterWeekStartKey"
 > => ({
   health: 80,
   healthUpdatedAt: localDateKey(new Date()),
   lastInPersonAt: null,
   fertilizePlan: null,
-  lastChattedTodayAt: null,
+  lastChattedAt: null,
   lastWaterWeekStartKey: null,
 });
 
@@ -210,27 +209,16 @@ export default function Home() {
     setEditTarget((cur) => (cur?.id === id ? null : cur));
   }, []);
 
-  const handleWaterToday = useCallback(
-    (id: string) => {
-      const today = localDateKey(new Date());
-      updateBud(id, (b) => ({
-        ...b,
-        lastChattedTodayAt: today,
-        health: clampHealth(b.health + waterPoints.today),
-        healthUpdatedAt: today,
-      }));
-    },
-    [updateBud],
-  );
-
   const handleWaterThisWeek = useCallback(
     (id: string) => {
-      const week = startOfCalendarWeekKey(new Date());
+      const today = localDateKey(new Date());
+      const weekKey = startOfCalendarWeekKey(new Date());
       updateBud(id, (b) => ({
         ...b,
-        lastWaterWeekStartKey: week,
+        lastChattedAt: today,
+        lastWaterWeekStartKey: weekKey,
         health: clampHealth(b.health + waterPoints.thisWeek),
-        healthUpdatedAt: localDateKey(new Date()),
+        healthUpdatedAt: today,
       }));
     },
     [updateBud],
@@ -293,8 +281,7 @@ export default function Home() {
                 bud={bud}
                 anchorEl={flowerAnchorRefs.current[bud.id] ?? null}
                 onClose={() => setOpenCareId(null)}
-                onWaterToday={() => handleWaterToday(bud.id)}
-                onWaterThisWeek={() => handleWaterThisWeek(bud.id)}
+                onWaterToday={() => handleWaterThisWeek(bud.id)}
                 onSavePlan={(plan) => handleSavePlan(bud.id, plan)}
                 onClearPlan={() => handleClearPlan(bud.id)}
                 onCompleteFertilize={() => handleCompleteFertilize(bud.id)}

@@ -31,7 +31,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${schoolbell.variable} ${pangolin.variable} h-full antialiased`}
+      className={`${schoolbell.variable} ${pangolin.variable} h-full antialiased text-foreground`}
     > 
       <body className="min-h-full flex flex-col">
         <NavBar />

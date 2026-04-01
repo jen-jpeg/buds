@@ -6,6 +6,7 @@ import {
   diffCalendarDays,
   fertilizeBoost,
   localDateKey,
+  parseLocalDateKey,
   startOfCalendarWeekKey,
   waterPoints,
 } from "../lib/bud-care";
@@ -18,7 +19,6 @@ type FlowerCarePopupProps = {
   anchorEl: HTMLElement | null;
   onClose: () => void;
   onWaterToday: () => void;
-  onWaterThisWeek: () => void;
   onSavePlan: (plan: FertilizePlan) => void;
   onClearPlan: () => void;
   onCompleteFertilize: () => void;
@@ -30,12 +30,31 @@ export default function FlowerCarePopup({
   anchorEl,
   onClose,
   onWaterToday,
-  onWaterThisWeek,
   onSavePlan,
   onClearPlan,
   onCompleteFertilize,
   onRequestEdit,
 }: FlowerCarePopupProps) {
+  const formatRelativeDate = (key: string | null, base: Date, empty: string) => {
+    if (!key) return empty;
+    const todayKey = localDateKey(base);
+    if (key === todayKey) return "today";
+    const days = diffCalendarDays(key, base);
+    if (days === 1) return "yesterday";
+    if (days <= 14) return `${days} days ago`;
+    const d = parseLocalDateKey(key);
+    if (!d) return key;
+    const thisYear = base.getFullYear();
+    if (d.getFullYear() === thisYear) {
+      return d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+    }
+    return d.toLocaleDateString(undefined, {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+  };
+
   const rootRef = useRef<HTMLDivElement>(null);
   const panelId = useId();
   const [tab, setTab] = useState<Tab>("water");
@@ -99,11 +118,8 @@ export default function FlowerCarePopup({
 
   const now = new Date();
   const todayKey = localDateKey(now);
-  const weekStart = startOfCalendarWeekKey(now);
-  const chattedToday = bud.lastChattedTodayAt === todayKey;
-  const chattedThisWeek =
-    bud.lastWaterWeekStartKey !== null &&
-    bud.lastWaterWeekStartKey === weekStart;
+  const weekKey = startOfCalendarWeekKey(now);
+  const chattedThisWeek = bud.lastWaterWeekStartKey === weekKey;
 
   const nextBoost = fertilizeBoost({
     lastInPersonAt: bud.lastInPersonAt,
@@ -111,9 +127,8 @@ export default function FlowerCarePopup({
     at: now,
   });
 
-  const lastVisitLabel = bud.lastInPersonAt
-    ? `${diffCalendarDays(bud.lastInPersonAt, now)} days ago`
-    : "not yet";
+  const lastVisitLabel = formatRelativeDate(bud.lastInPersonAt, now, "not yet");
+  const lastChattedLabel = formatRelativeDate(bud.lastChattedAt, now, "not yet");
 
   const healthPct = Math.round(clampHealth(bud.health));
 
@@ -153,7 +168,7 @@ export default function FlowerCarePopup({
         </button>
       </div>
 
-      <h3 className="pr-10 font-bold text-neutral-900">{bud.name}</h3>
+      <h3 className="pr-10 font-bold text-secondary-foreground">{bud.name}</h3>
       <div className="flex w-full flex-col gap-1">
         <div className="flex items-baseline justify-between gap-2 pr-1">
           <span className="text-[1.05rem] text-neutral-500">Health</span>
@@ -162,7 +177,7 @@ export default function FlowerCarePopup({
           </span>
         </div>
         <div
-          className="h-1.5 w-full overflow-hidden rounded-full border border-emerald-900 bg-neutral-100/90"
+          className="h-2 w-full overflow-hidden rounded-full border border-health-bar-sage bg-neutral-100/90"
           role="status"
           aria-label={`Health ${healthPct} percent`}
         >
@@ -207,38 +222,31 @@ export default function FlowerCarePopup({
 
       {tab === "water" ? (
         <div className="mt-3 flex flex-col gap-2 text-[1.2rem]" role="tabpanel">
-          <p className="text-neutral-600">
-            Log virtual connection: small drops that keep the friendship from
-            drying out.
+          <p className="text-neutral-500 text-[1rem] font-pangolin">
+            Small drops of connection keep the friendship from drying out!
+          </p>
+          <p className="text-[1rem] text-neutral-500">
+            Last chatted:{" "}
+            <span className="font-medium text-neutral-700">
+              {lastChattedLabel}
+            </span>
           </p>
           <button
             type="button"
-            disabled={chattedToday}
-            onClick={onWaterToday}
-            className="rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-left font-medium text-emerald-900 transition enabled:hover:cursor-pointer enabled:hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-45"
-          >
-            Chatted today
-            <span className="mt-0.5 block text-[1.05rem] font-normal text-emerald-800/80">
-              +{waterPoints.today} health
-              {chattedToday ? " · already logged today" : ""}
-            </span>
-          </button>
-          <button
-            type="button"
             disabled={chattedThisWeek}
-            onClick={onWaterThisWeek}
-            className="rounded-md border border-neutral-200 bg-neutral-50 px-3 py-2 text-left font-medium text-neutral-800 transition enabled:hover:cursor-pointer enabled:hover:bg-neutral-100 disabled:cursor-not-allowed disabled:opacity-45"
+            onClick={onWaterToday}
+            className="rounded-md border border-blue-200 bg-blue-50 px-3 py-2 text-left font-medium text-blue-900 transition enabled:hover:cursor-pointer enabled:hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-45"
           >
-            Connected this week
-            <span className="mt-0.5 block text-[1.05rem] font-normal text-neutral-600">
+            Chatted this week
+            <span className="mt-0.5 block text-[1.05rem] font-normal text-blue-800/80">
               +{waterPoints.thisWeek} health
               {chattedThisWeek ? " · already logged this week" : ""}
             </span>
           </button>
         </div>
       ) : (
-        <div className="mt-3 flex flex-col gap-3 text-[1.2rem]" role="tabpanel">
-          <p className="text-neutral-600">
+        <div className="mt-3 flex flex-col gap-3 text-[1rem] text-neutral-500" role="tabpanel">
+          <p className="font-pangolin font-size-[1.2rem]">
             The biggest health boost comes from seeing your bud in person. Plan a visit and mark when complete!
           </p>
           <p className="text-neutral-500">
@@ -246,11 +254,10 @@ export default function FlowerCarePopup({
             <span className="font-medium text-neutral-700">
               {lastVisitLabel}
             </span>
-            {" · "}
           </p>
 
           {bud.fertilizePlan ? (
-            <div className="rounded-md border border-amber-100 bg-amber-50/80 p-2 text-amber-950">
+            <div className="rounded-md border border-blue-200 bg-blue-50/80 p-2 text-blue-950">
               <p className="font-medium">
                 Planned {bud.fertilizePlan.plannedDate}
               </p>
@@ -263,14 +270,14 @@ export default function FlowerCarePopup({
                 <button
                   type="button"
                   onClick={onCompleteFertilize}
-                  className="rounded-md bg-emerald-600 px-2.5 py-1 text-[1.05rem] font-medium text-white hover:cursor-pointer hover:bg-emerald-700"
+                  className="rounded-md bg-button-green px-2.5 py-1 text-[1.05rem] font-medium text-white hover:cursor-pointer hover:bg-button-green-hover"
                 >
                   We met — fertilize
                 </button>
                 <button
                   type="button"
                   onClick={onClearPlan}
-                  className="rounded-md border border-amber-200/80 px-2.5 py-1 text-[1.05rem] font-medium text-amber-900 hover:cursor-pointer hover:bg-amber-100/80"
+                  className="rounded-md border border-blue-200/80 px-2.5 py-1 text-[1.05rem] font-medium text-blue-900 hover:cursor-pointer hover:bg-blue-100/80"
                 >
                   Clear plan
                 </button>
@@ -284,7 +291,7 @@ export default function FlowerCarePopup({
                   type="date"
                   value={planDate}
                   onChange={(e) => setPlanDate(e.target.value)}
-                  className="rounded-md border border-neutral-200 px-2 py-1.5 text-[1.35rem] text-neutral-900 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30"
+                  className="rounded-md border border-neutral-200 px-2 py-1.5 text-[1.1rem] text-neutral-900 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30"
                 />
               </label>
               <label className="flex flex-col gap-1">
@@ -294,13 +301,13 @@ export default function FlowerCarePopup({
                   onChange={(e) => setPlanNote(e.target.value)}
                   rows={3}
                   placeholder="Coffee, walk, game night…"
-                  className="resize-none rounded-md border border-neutral-200 px-2 py-1.5 text-[1.35rem] text-neutral-900 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30"
+                  className="resize-none rounded-md border border-neutral-200 px-2 py-1.5 text-[1.1rem] text-neutral-900 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30"
                 />
               </label>
               <button
                 type="button"
                 onClick={handleSavePlan}
-                className="rounded-md bg-neutral-900 px-3 py-2 text-[1.35rem] font-medium text-white hover:cursor-pointer hover:bg-neutral-800"
+            className="rounded-md bg-button-green px-3 py-2 text-[1.35rem] font-medium text-white hover:cursor-pointer hover:bg-button-green-hover"
               >
                 Save plan
               </button>

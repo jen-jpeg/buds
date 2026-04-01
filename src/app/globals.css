@@ -6,6 +6,8 @@
   --secondary-foreground: #455c3b;
   /** Muted sage for friendship health bar fill */
   --health-bar-sage: #9aaa94;
+  --button-green: #356d6c;
+  --button-green-hover: #265150;
   /** Light yellow glow for flower image (hover / care open) */
   --flower-glow-inner: rgba(255, 248, 210, 0.92);
   --flower-glow-outer: rgba(255, 240, 160, 0.48);
@@ -16,6 +18,8 @@
   --color-foreground: var(--foreground);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-health-bar-sage: var(--health-bar-sage);
+  --color-button-green: var(--button-green);
+  --color-button-green-hover: var(--button-green-hover);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   /* 20% scale-up */

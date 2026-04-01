@@ -262,7 +262,7 @@ export default function FlowerAddCard({
             role="dialog"
             aria-label={editTarget ? "Edit bud" : "Add a bud"}
             aria-modal="true"
-            className="fixed top-1/2 left-1/2 z-50 max-h-[min(90vh,40rem)] w-[min(100vw-2rem,28rem)] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl border border-neutral-200 bg-white p-4 shadow-lg"
+            className="fixed top-1/2 left-1/2 z-50 max-h-[min(95vh,48rem)] w-[min(100vw-2rem,28rem)] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl border border-neutral-200 bg-white p-4 shadow-lg"
           >
             {/* Form */}
             <div className="flex flex-col gap-4">
@@ -539,7 +539,7 @@ export default function FlowerAddCard({
                 type="button"
                 disabled={!canSubmit}
                 onClick={handleSubmit}
-                className="rounded-md bg-emerald-600 px-4 py-2 text-[1.2rem] font-medium text-white transition enabled:hover:cursor-pointer enabled:hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-40"
+                className="rounded-md bg-button-green px-4 py-2 text-[1.2rem] font-medium text-white transition enabled:hover:cursor-pointer enabled:hover:bg-button-green-hover disabled:cursor-not-allowed disabled:opacity-40"
               >
                 {editTarget ? "Save" : "Add"}
               </button>

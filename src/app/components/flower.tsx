@@ -26,8 +26,8 @@ export type BudDisplay = {
   /** YYYY-MM-DD of last in-person visit */
   lastInPersonAt: string | null;
   fertilizePlan: FertilizePlan | null;
-  /** YYYY-MM-DD when user last logged “chatted today” */
-  lastChattedTodayAt: string | null;
+  /** YYYY-MM-DD when user last logged a chat */
+  lastChattedAt: string | null;
   /** Monday week key when user last used “this week” water log */
   lastWaterWeekStartKey: string | null;
 };
@@ -66,12 +66,37 @@ function lastSawLine(bud: BudDisplay): string {
   return `Last saw ${d.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}`;
 }
 
+function lastChattedLine(bud: BudDisplay): string {
+  if (!bud.lastChattedAt) {
+    return "";
+  }
+  const today = localDateKey(new Date());
+  const key = bud.lastChattedAt;
+  if (key === today) {
+    return "Last chatted today";
+  }
+  const days = diffCalendarDays(key, new Date());
+  if (days === 1) {
+    return "Last chatted yesterday";
+  }
+  if (days <= 14) {
+    return `Last chatted ${days} days ago`;
+  }
+  const d = parseLocalDateKey(key);
+  if (!d) {
+    return `Last chatted ${key}`;
+  }
+  const y = d.getFullYear();
+  const thisYear = new Date().getFullYear();
+  if (y === thisYear) {
+    return `Last chatted ${d.toLocaleDateString(undefined, { month: "short", day: "numeric" })}`;
+  }
+  return `Last chatted ${d.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}`;
+}
+
 function hoverInfoLines(bud: BudDisplay): string[] {
   const today = localDateKey(new Date());
-  let lines: string[] = [lastSawLine(bud)];
-  if (bud.lastChattedTodayAt === today) {
-    lines.push("Chatted today");
-  }
+  let lines: string[] = [lastSawLine(bud), lastChattedLine(bud)];
   lines = lines.filter(line => line !== "");
   if (bud.fertilizePlan) {
     const { plannedDate, note } = bud.fertilizePlan;
