@@ -70,6 +70,7 @@ export default function FlowerAddCard({
   const [intervalAssist, setIntervalAssist] = useState<IntervalAssist>(null);
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
+  const nameInputRef = useRef<HTMLInputElement>(null);
   const yearsFieldRef = useRef<HTMLDivElement>(null);
   const weeksFieldRef = useRef<HTMLDivElement>(null);
   const monthsFieldRef = useRef<HTMLDivElement>(null);
@@ -192,6 +193,11 @@ export default function FlowerAddCard({
 
   useLayoutEffect(() => {
     if (!open) return;
+    nameInputRef.current?.focus({ preventScroll: true });
+  }, [open]);
+
+  useLayoutEffect(() => {
+    if (!open) return;
     updateFlowerScrollFades();
     const el = flowerScrollRef.current;
     if (!el) return;
@@ -269,6 +275,7 @@ export default function FlowerAddCard({
               <label className="flex flex-col gap-1 text-base">
                 <span className="font-medium text-neutral-800">Name</span>
                 <input
+                  ref={nameInputRef}
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
