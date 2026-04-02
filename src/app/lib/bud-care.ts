@@ -55,6 +55,18 @@ export function startOfCalendarWeekKey(d: Date): string {
   return localDateKey(x);
 }
 
+/**
+ * Weekly water / "chatted this week" is once per Monday-start calendar week.
+ * True when the stored week key matches the week containing `at` (UI keeps the action disabled).
+ */
+export function isWaterAlreadyLoggedThisWeek(
+  lastWaterWeekStartKey: string | null,
+  at: Date,
+): boolean {
+  if (lastWaterWeekStartKey === null) return false;
+  return lastWaterWeekStartKey === startOfCalendarWeekKey(at);
+}
+
 export function clampHealth(n: number): number {
   if (!Number.isFinite(n)) return 0;
   return Math.min(100, Math.max(0, n));

@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Schoolbell, Pangolin } from "next/font/google";
 import "./globals.css";
 import NavBar from "./components/nav-bar";
@@ -36,6 +38,8 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <NavBar />
         {children}
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

@@ -5,9 +5,9 @@ import {
   clampHealth,
   diffCalendarDays,
   fertilizeBoost,
+  isWaterAlreadyLoggedThisWeek,
   localDateKey,
   parseLocalDateKey,
-  startOfCalendarWeekKey,
   waterPoints,
 } from "../lib/bud-care";
 import {
@@ -122,8 +122,10 @@ export default function FlowerCarePopup({
 
   const now = new Date();
   const todayKey = localDateKey(now);
-  const weekKey = startOfCalendarWeekKey(now);
-  const chattedThisWeek = bud.lastWaterWeekStartKey === weekKey;
+  const chattedThisWeek = isWaterAlreadyLoggedThisWeek(
+    bud.lastWaterWeekStartKey,
+    now,
+  );
 
   const nextBoost = fertilizeBoost({
     lastInPersonAt: bud.lastInPersonAt,

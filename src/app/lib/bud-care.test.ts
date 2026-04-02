@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import {
   clampHealth,
   healthAfterDecay,
+  isWaterAlreadyLoggedThisWeek,
+  startOfCalendarWeekKey,
 } from "./bud-care";
 
 describe("clampHealth", () => {
@@ -89,5 +91,33 @@ describe("healthAfterDecay", () => {
     // Same 7 days: loss 25 vs 12.5
     expect(weekInterval.health).toBeCloseTo(75, 5);
     expect(twoWeekInterval.health).toBeCloseTo(87.5, 5);
+  });
+});
+
+describe("isWaterAlreadyLoggedThisWeek (chatted this week / weekly water)", () => {
+  it("is false when nothing has been logged", () => {
+    expect(isWaterAlreadyLoggedThisWeek(null, new Date(2026, 0, 7))).toBe(
+      false,
+    );
+  });
+
+  it("stays true for every day in the same Monday-start week after logging", () => {
+    const wednesday = new Date(2026, 0, 7);
+    const loggedWeekKey = startOfCalendarWeekKey(wednesday);
+    expect(isWaterAlreadyLoggedThisWeek(loggedWeekKey, wednesday)).toBe(true);
+    expect(isWaterAlreadyLoggedThisWeek(loggedWeekKey, new Date(2026, 0, 5))).toBe(
+      true,
+    );
+    expect(isWaterAlreadyLoggedThisWeek(loggedWeekKey, new Date(2026, 0, 11))).toBe(
+      true,
+    );
+  });
+
+  it("is false again in the next calendar week", () => {
+    const wednesday = new Date(2026, 0, 7);
+    const loggedWeekKey = startOfCalendarWeekKey(wednesday);
+    expect(isWaterAlreadyLoggedThisWeek(loggedWeekKey, new Date(2026, 0, 12))).toBe(
+      false,
+    );
   });
 });
