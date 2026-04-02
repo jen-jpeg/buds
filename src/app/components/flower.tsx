@@ -144,6 +144,7 @@ export default function Flower({
   const hoverLines = hoverInfoLines(bud);
   const imageSrc = imageForHealth(bud.healthyImage, bud.health);
   const { trackBorder, fill: healthBarFill } = healthBarColorClasses(bud.health);
+  const swayEnabled = Number.isFinite(bud.health) && bud.health >= 50;
 
   return (
     <div
@@ -165,7 +166,7 @@ export default function Flower({
         onClick={() => onOpenCare?.()}
         style={{
           transformOrigin: "bottom center",
-          animationName: selected ? "none" : "sway1",
+          animationName: selected || !swayEnabled ? "none" : "sway1",
           animationDuration: `${swayDuration}s`,
           animationTimingFunction: "ease-in-out",
           animationDelay: `${swayDelay}s`,
@@ -177,7 +178,7 @@ export default function Flower({
         <div
           style={{
             transformOrigin: "bottom center",
-            animationName: selected ? "none" : "sway2",
+            animationName: selected || !swayEnabled ? "none" : "sway2",
             animationDuration: `${swayDuration * 0.55}s`,
             animationTimingFunction: "ease-in-out",
             animationDelay: `${swayDelay + 0.5}s`,

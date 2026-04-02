@@ -69,7 +69,8 @@ export function isWaterAlreadyLoggedThisWeek(
 
 export function clampHealth(n: number): number {
   if (!Number.isFinite(n)) return 0;
-  return Math.min(100, Math.max(0, n));
+  const clamped = Math.min(100, Math.max(0, n));
+  return Math.round(clamped);
 }
 
 /**

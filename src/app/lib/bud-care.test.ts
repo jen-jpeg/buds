@@ -89,8 +89,9 @@ describe("healthAfterDecay", () => {
       at,
     });
     // Same 7 days: loss 25 vs 12.5
-    expect(weekInterval.health).toBeCloseTo(75, 5);
-    expect(twoWeekInterval.health).toBeCloseTo(87.5, 5);
+    expect(weekInterval.health).toBe(75);
+    // 87.5 rounds to 88
+    expect(twoWeekInterval.health).toBe(88);
   });
 });
 
