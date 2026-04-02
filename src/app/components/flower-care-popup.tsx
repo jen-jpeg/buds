@@ -255,7 +255,7 @@ export default function FlowerCarePopup({
         </div>
       ) : (
         <div className="mt-2.5 flex flex-col gap-2 text-[0.95rem] text-neutral-500 sm:mt-3 sm:gap-3 sm:text-[1rem]" role="tabpanel">
-          <p className="font-pangolin text-[0.95rem] sm:text-[1.2rem]">
+          <p className="font-pangolin text-[0.9rem] sm:text-[1rem]">
             The biggest health boost comes from seeing your bud in person. Plan a visit and mark when complete!
           </p>
           <p className="text-neutral-500">

@@ -130,7 +130,7 @@ export default function JsonEditorPopup({ onClose }: JsonEditorPopupProps) {
             edit session JSON
           </h2>
 
-          <p className="mt-2 text-[0.95rem] text-neutral-600 sm:text-[1.05rem]">
+          <p className="mt-2 text-[0.95rem] text-neutral-600 sm:text-[1.05rem] font-pangolin">
             This edits the locally stored data for this browser session. Use to quickly edit or export your data.
           </p>
 
