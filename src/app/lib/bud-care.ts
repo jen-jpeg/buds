@@ -61,10 +61,10 @@ export function clampHealth(n: number): number {
 }
 
 /**
- * Health lost over one full `seeEveryDays` window with no positive care.
- * Daily loss = this / seeEveryDays (longer desired interval → slower decay).
+ * Health lost over one full `seeEveryDays` window with no positive care (e.g. a week
+ * apart → ~one week of silence costs a quarter of the bar). Daily loss = this / seeEveryDays.
  */
-const HEALTH_DECAY_PER_INTERVAL = 18;
+const HEALTH_DECAY_PER_INTERVAL = 25;
 
 export function healthAfterDecay(args: {
   health: number;
@@ -89,8 +89,7 @@ export function healthAfterDecay(args: {
   };
 }
 
-const WATER_TODAY = 5;
-const WATER_THIS_WEEK = 3;
+const WATER_THIS_WEEK = 5;
 
 export function fertilizeBoost(args: {
   lastInPersonAt: string | null;
@@ -111,7 +110,6 @@ export function fertilizeBoost(args: {
 }
 
 export const waterPoints = {
-  today: WATER_TODAY,
   thisWeek: WATER_THIS_WEEK,
 } as const;
 

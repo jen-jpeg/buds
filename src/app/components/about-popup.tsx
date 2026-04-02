@@ -69,7 +69,7 @@ export default function AboutPopup({ onClose }: AboutPopupProps) {
           Just like flowers, friendships need care to stay healthy! <br /> <br />
           Buds is a simple friendship health tracker that lets you plant your <i>buddies</i> as flower <i>buds</i>  :p 
           <br /> <br />
-          Bud health decreases daily at a rate based on how often you want to see them! Text or plan a hangout to keep them healthy :) <br /> <br />
+          Bud health decreases daily at a rate based on how often you want to see them! Text or plan a hangout to keep them healthy 🌱 <br /> <br />
           Data is stored locally in your browser and can be exported or directly edited via JSON.
         </p>
         <div className="mt-5 border-t border-neutral-100 pt-4 text-[1.2rem] flex flex-wrap gap-6">

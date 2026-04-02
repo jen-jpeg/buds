@@ -4,8 +4,10 @@
   --background: #ffffff;
   --foreground: #516427;
   --secondary-foreground: #455c3b;
-  /** Muted sage for friendship health bar fill */
+  /** Friendship health bar — tiers match flower sprite thresholds (see flower.tsx) */
   --health-bar-sage: #9aaa94;
+  --health-bar-warn: #b89a6a;
+  --health-bar-low: #b08080;
   --button-green: #356d6c;
   --button-green-hover: #265150;
   /** Light yellow glow for flower image (hover / care open) */
@@ -18,6 +20,8 @@
   --color-foreground: var(--foreground);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-health-bar-sage: var(--health-bar-sage);
+  --color-health-bar-warn: var(--health-bar-warn);
+  --color-health-bar-low: var(--health-bar-low);
   --color-button-green: var(--button-green);
   --color-button-green-hover: var(--button-green-hover);
   --font-sans: var(--font-geist-sans);

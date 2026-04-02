@@ -8,6 +8,7 @@ import {
   localDateKey,
   parseLocalDateKey,
 } from "../lib/bud-care";
+import { healthBarColorClasses, imageForHealth } from "../lib/flower-display";
 
 export type FertilizePlan = {
   plannedDate: string;
@@ -108,15 +109,7 @@ function hoverInfoLines(bud: BudDisplay): string[] {
   return lines;
 }
 
-function imageForHealth(healthyImage: string, health: number): string {
-  // Images follow the convention: `*_0.png` (healthy), `*_1.png` (sick), `*_2.png` (joever).
-  // If that convention ever changes, we fall back to the healthy image.
-  const sickImage = healthyImage.replace(/_0\.png$/, "_1.png");
-  const joeverImage = healthyImage.replace(/_0\.png$/, "_2.png");
-  if (health < 50 && joeverImage !== healthyImage) return joeverImage;
-  if (health < 70 && sickImage !== healthyImage) return sickImage;
-  return healthyImage;
-}
+export { healthBarColorClasses } from "../lib/flower-display";
 
 type FlowerProps = {
   bud: BudDisplay;
@@ -150,6 +143,7 @@ export default function Flower({
 
   const hoverLines = hoverInfoLines(bud);
   const imageSrc = imageForHealth(bud.healthyImage, bud.health);
+  const { trackBorder, fill: healthBarFill } = healthBarColorClasses(bud.health);
 
   return (
     <div
@@ -207,12 +201,12 @@ export default function Flower({
       <div className="flex w-full min-w-[2rem] max-w-[10rem] flex-col gap-1">
         <div className="flex w-full items-center gap-1.5">
           <div
-            className="h-2 min-w-0 flex-1 overflow-hidden rounded-full border border-lg border-health-bar-sage bg-neutral-100/90"
+            className={`h-2 min-w-0 flex-1 overflow-hidden rounded-full border border-lg bg-neutral-100/90 ${trackBorder}`}
             role="status"
             aria-label={`Health ${Math.round(bud.health)} percent. Connect every ${bud.seeEveryDays} days`}
           >
             <div
-              className="h-full rounded-full bg-health-bar-sage transition-all duration-300"
+              className={`h-full rounded-full transition-all duration-300 ${healthBarFill}`}
               style={{ width: `${Math.round(bud.health)}%` }}
             />
           </div>

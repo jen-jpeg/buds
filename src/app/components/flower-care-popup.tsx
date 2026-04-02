@@ -10,7 +10,11 @@ import {
   startOfCalendarWeekKey,
   waterPoints,
 } from "../lib/bud-care";
-import type { BudDisplay, FertilizePlan } from "./flower";
+import {
+  healthBarColorClasses,
+  type BudDisplay,
+  type FertilizePlan,
+} from "./flower";
 
 type Tab = "water" | "fertilize";
 
@@ -131,6 +135,7 @@ export default function FlowerCarePopup({
   const lastChattedLabel = formatRelativeDate(bud.lastChattedAt, now, "not yet");
 
   const healthPct = Math.round(clampHealth(bud.health));
+  const { trackBorder, fill: healthBarFill } = healthBarColorClasses(bud.health);
 
   const handleSavePlan = () => {
     const trimmed = planNote.trim();
@@ -177,12 +182,12 @@ export default function FlowerCarePopup({
           </span>
         </div>
         <div
-          className="h-2 w-full overflow-hidden rounded-full border border-health-bar-sage bg-neutral-100/90"
+          className={`h-2 w-full overflow-hidden rounded-full border bg-neutral-100/90 ${trackBorder}`}
           role="status"
           aria-label={`Health ${healthPct} percent`}
         >
           <div
-            className="h-full rounded-full bg-health-bar-sage transition-all duration-300"
+            className={`h-full rounded-full transition-all duration-300 ${healthBarFill}`}
             style={{ width: `${healthPct}%` }}
           />
         </div>
