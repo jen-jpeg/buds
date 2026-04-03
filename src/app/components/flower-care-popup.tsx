@@ -212,7 +212,7 @@ export default function FlowerCarePopup({
           }`}
           onClick={() => setTab("water")}
         >
-          Water
+          💧 Water
         </button>
         <button
           type="button"
@@ -225,7 +225,7 @@ export default function FlowerCarePopup({
           }`}
           onClick={() => setTab("fertilize")}
         >
-          Fertilize
+          🌱 Fertilize
         </button>
       </div>
 
@@ -235,7 +235,7 @@ export default function FlowerCarePopup({
             Small drops of connection keep the friendship from drying out!
           </p>
           <p className="text-[0.9rem] text-neutral-500 sm:text-[1rem]">
-            Last chatted:{" "}
+            Last logged chat:{" "}
             <span className="font-medium text-neutral-700">
               {lastChattedLabel}
             </span>
@@ -271,7 +271,7 @@ export default function FlowerCarePopup({
                 Planned {bud.fertilizePlan.plannedDate}
               </p>
               {bud.fertilizePlan.note ? (
-                <p className="mt-1 text-amber-900/90">
+                <p className="mt-1 text-blue-900/90">
                   {bud.fertilizePlan.note}
                 </p>
               ) : null}

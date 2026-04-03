@@ -64,7 +64,7 @@ export default function FlowerAddCard({
   /** Whole years (365 days each when totaling). */
   const [everyYears, setEveryYears] = useState(0);
   /** Full weeks (7 days each when totaling). */
-  const [everyWeeks, setEveryWeeks] = useState(1);
+  const [everyWeeks, setEveryWeeks] = useState(0);
   /** Whole months (30 days each when totaling). */
   const [everyMonths, setEveryMonths] = useState(0);
   const [intervalAssist, setIntervalAssist] = useState<IntervalAssist>(null);
@@ -129,7 +129,7 @@ export default function FlowerAddCard({
   const close = useCallback(() => {
     setName("");
     setEveryYears(0);
-    setEveryWeeks(1);
+    setEveryWeeks(0);
     setEveryMonths(0);
     setIntervalAssist(null);
     setSelectedKey(null);

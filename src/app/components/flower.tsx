@@ -74,25 +74,25 @@ function lastChattedLine(bud: BudDisplay): string {
   const today = localDateKey(new Date());
   const key = bud.lastChattedAt;
   if (key === today) {
-    return "Last chatted today";
+    return "Last logged chat: today";
   }
   const days = diffCalendarDays(key, new Date());
   if (days === 1) {
-    return "Last chatted yesterday";
+    return "Last logged chat: yesterday";
   }
   if (days <= 14) {
-    return `Last chatted ${days} days ago`;
+    return `Last logged chat: ${days} days ago`;
   }
   const d = parseLocalDateKey(key);
   if (!d) {
-    return `Last chatted ${key}`;
+    return `Last logged chat: ${key}`;
   }
   const y = d.getFullYear();
   const thisYear = new Date().getFullYear();
   if (y === thisYear) {
-    return `Last chatted ${d.toLocaleDateString(undefined, { month: "short", day: "numeric" })}`;
+    return `Last logged chat: ${d.toLocaleDateString(undefined, { month: "short", day: "numeric" })}`;
   }
-  return `Last chatted ${d.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}`;
+  return `Last logged chat: ${d.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}`;
 }
 
 function hoverInfoLines(bud: BudDisplay): string[] {
