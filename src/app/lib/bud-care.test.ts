@@ -74,6 +74,18 @@ describe("healthAfterDecay", () => {
     expect(result.healthUpdatedAt).toBe("2026-02-01");
   });
 
+  it("drops health to 0 when enough time passes with no care", () => {
+    const farFuture = new Date(2026, 2, 1);
+    const result = healthAfterDecay({
+      health: 100,
+      healthUpdatedAt: "2026-01-01",
+      seeEveryDays: 4,
+      at: farFuture,
+    });
+    expect(result.health).toBe(0);
+    expect(result.healthUpdatedAt).toBe("2026-03-01");
+  });
+
   it("scales decay inversely with seeEveryDays (14 vs 7 over the same span)", () => {
     const at = new Date(2026, 0, 8);
     const weekInterval = healthAfterDecay({
@@ -89,9 +101,8 @@ describe("healthAfterDecay", () => {
       at,
     });
     // Same 7 days: loss 25 vs 12.5
-    expect(weekInterval.health).toBe(75);
-    // 87.5 rounds to 88
-    expect(twoWeekInterval.health).toBe(88);
+    expect(weekInterval.health).toBeCloseTo(75, 5);
+    expect(twoWeekInterval.health).toBeCloseTo(87.5, 5);
   });
 });
 

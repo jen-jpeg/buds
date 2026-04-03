@@ -70,7 +70,8 @@ export function isWaterAlreadyLoggedThisWeek(
 export function clampHealth(n: number): number {
   if (!Number.isFinite(n)) return 0;
   const clamped = Math.min(100, Math.max(0, n));
-  return Math.round(clamped);
+  // Keep decimals so fractional decay isn't lost between frequent reconciliations.
+  return clamped;
 }
 
 /**
