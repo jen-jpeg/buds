@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useId } from "react";
+import { useEffect, useId, useState } from "react";
+import ChangelogPopup from "./changelog-popup";
 
 type AboutPopupProps = {
   onClose: () => void;
@@ -8,14 +9,16 @@ type AboutPopupProps = {
 
 export default function AboutPopup({ onClose }: AboutPopupProps) {
   const panelId = useId();
+  const [changelogOpen, setChangelogOpen] = useState(false);
 
   useEffect(() => {
+    if (changelogOpen) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, [onClose]);
+  }, [changelogOpen, onClose]);
 
   useEffect(() => {
     const prev = document.body.style.overflow;
@@ -73,7 +76,15 @@ export default function AboutPopup({ onClose }: AboutPopupProps) {
           Bud health decreases daily at a rate based on how often you want to see them! Text or plan a hangout to keep them healthy 🌱 <br /> <br />
           Data is stored locally in your browser and can be exported or directly edited via JSON.
         </p>
-        <div className="mt-5 border-t border-neutral-100 pt-4 text-[1.05rem] flex flex-wrap gap-4 sm:gap-6 sm:text-[1.2rem]">
+        <div className="mt-5 border-t border-neutral-100 pt-4 text-[1.05rem] flex flex-wrap items-center gap-4 sm:gap-6 sm:text-[1.2rem]">
+          <button
+            type="button"
+            onClick={() => setChangelogOpen(true)}
+            className="inline-flex items-center gap-2 font-medium text-foreground transition hover:cursor-pointer hover:text-health-bar-sage focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/40 rounded-sm"
+          >
+            Changelog
+          </button>
+
           <a
             href="https://github.com/jen-jpeg/buds"
             target="_blank"
@@ -122,6 +133,10 @@ export default function AboutPopup({ onClose }: AboutPopupProps) {
         </p>
         </div>
       </div>
+
+      {changelogOpen ? (
+        <ChangelogPopup onClose={() => setChangelogOpen(false)} />
+      ) : null}
     </div>
   );
 }
