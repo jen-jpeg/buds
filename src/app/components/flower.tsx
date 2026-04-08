@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import isMobile from "../hooks/is-mobile";
 import {
   diffCalendarDays,
   localDateKey,
@@ -111,6 +110,9 @@ function hoverInfoLines(bud: BudDisplay): string[] {
 
 export { healthBarColorClasses } from "../lib/flower-display";
 
+/** Intrinsic size for optimizer; display is 7.2rem / 14.4rem (≈2× retina for the larger). */
+const FLOWER_IMAGE_PX = 480;
+
 type FlowerProps = {
   bud: BudDisplay;
   swayDuration?: number;
@@ -128,7 +130,6 @@ export default function Flower({
   onOpenCare,
   onAnchorChange,
 }: FlowerProps) {
-  const IMAGE_PX = isMobile() ? 120 : 600;
   const selected = careOpen;
   const [hovered, setHovered] = useState(false);
   const showHoverExtras = hovered && !careOpen;
@@ -189,8 +190,10 @@ export default function Flower({
           <Image
             src={imageSrc}
             alt=""
-            width={IMAGE_PX}
-            height={IMAGE_PX}
+            width={FLOWER_IMAGE_PX}
+            height={FLOWER_IMAGE_PX}
+            sizes="(max-width: 767px) 7.2rem, 14.4rem"
+            quality={70}
             className="inline-block h-[7.2rem] w-[7.2rem] md:h-[14.4rem] md:w-[14.4rem] object-contain"
             style={glowStyle}
           />

@@ -13,7 +13,6 @@ import {
 import { intervalTotalDays, seeEveryDaysToYMW } from "../lib/bud-care";
 import flowersData from "../data/flowers.json";
 import type { BudDisplay } from "./flower";
-import isMobile from "../hooks/is-mobile";
 export type NewBudPayload = {
   name: string;
   seeEveryDays: number;
@@ -380,7 +379,8 @@ export default function FlowerAddCard({
                               alt=""
                               fill
                               className="object-contain"
-                              sizes="(max-width:28rem) 45vw, 12rem"
+                              sizes="9.6rem"
+                              quality={70}
                             />
                           </div>
                         </button>
