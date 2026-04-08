@@ -2,7 +2,9 @@ import { describe, expect, it } from "vitest";
 import {
   clampHealth,
   healthAfterDecay,
+  intervalTotalDays,
   isWaterAlreadyLoggedThisWeek,
+  seeEveryDaysToYMW,
   startOfCalendarWeekKey,
 } from "./bud-care";
 
@@ -131,5 +133,54 @@ describe("isWaterAlreadyLoggedThisWeek (chatted this week / weekly water)", () =
     expect(isWaterAlreadyLoggedThisWeek(loggedWeekKey, new Date(2026, 0, 12))).toBe(
       false,
     );
+  });
+});
+
+describe("intervalTotalDays", () => {
+  it("sums parts with fixed month/year/week lengths used by the add card", () => {
+    expect(
+      intervalTotalDays({
+        everyYears: 1,
+        everyMonths: 1,
+        everyWeeks: 1,
+        everyDays: 1,
+      }),
+    ).toBe(365 + 30 + 7 + 1);
+  });
+
+  it("treats zero parts as zero contribution", () => {
+    expect(
+      intervalTotalDays({
+        everyYears: 0,
+        everyMonths: 0,
+        everyWeeks: 0,
+        everyDays: 0,
+      }),
+    ).toBe(0);
+  });
+});
+
+describe("seeEveryDaysToYMW", () => {
+  it("round-trips intervalTotalDays (covers greedy steps and year/month/week caps)", () => {
+    for (let total = 1; total <= 2500; total++) {
+      expect(intervalTotalDays(seeEveryDaysToYMW(total))).toBe(total);
+    }
+    expect(intervalTotalDays(seeEveryDaysToYMW(50_000))).toBe(50_000);
+  });
+
+  it("handles invalid or fractional inputs like the add-card", () => {
+    const one = {
+      everyYears: 0,
+      everyMonths: 0,
+      everyWeeks: 0,
+      everyDays: 1,
+    };
+    expect(seeEveryDaysToYMW(0)).toEqual(one);
+    expect(seeEveryDaysToYMW(-1)).toEqual(one);
+    expect(seeEveryDaysToYMW(Number.NaN)).toEqual(one);
+    expect(seeEveryDaysToYMW(Number.POSITIVE_INFINITY)).toEqual(one);
+    expect(seeEveryDaysToYMW(Number.NEGATIVE_INFINITY)).toEqual(one);
+    expect(seeEveryDaysToYMW(10.9)).toEqual(seeEveryDaysToYMW(10));
+    expect(intervalTotalDays(seeEveryDaysToYMW(99.1))).toBe(99);
   });
 });

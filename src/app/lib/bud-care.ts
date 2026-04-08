@@ -129,14 +129,36 @@ export const waterPoints = {
 
 const YEARS_MAX = 20;
 const MONTHS_MAX = 12;
+const WEEKS_MAX = 52;
 
-/** Approximate inverse of the add-card total (years×365 + months×30 + weeks×7). */
+export type IntervalParts = {
+  everyYears: number;
+  everyMonths: number;
+  everyWeeks: number;
+  everyDays: number;
+};
+
+/** Same total as the add-card: days + years×365 + months×30 + weeks×7. */
+export function intervalTotalDays(parts: IntervalParts): number {
+  return (
+    parts.everyDays +
+    parts.everyYears * 365 +
+    parts.everyWeeks * 7 +
+    parts.everyMonths * 30
+  );
+}
+
+/** Inverse of {@link intervalTotalDays} (greedy: years → months → weeks → remainder days). */
 export function seeEveryDaysToYMW(total: number) {
-  let d = Math.max(1, Math.floor(total));
+  const floored = Math.floor(Number(total));
+  let d =
+    Number.isFinite(floored) && floored >= 1 ? floored : 1;
   const everyYears = Math.min(YEARS_MAX, Math.floor(d / 365));
   d -= everyYears * 365;
   const everyMonths = Math.min(MONTHS_MAX, Math.floor(d / 30));
   d -= everyMonths * 30;
-  const everyWeeks = Math.max(1, Math.ceil(d / 7));
-  return { everyYears, everyMonths, everyWeeks };
+  const everyWeeks = Math.min(WEEKS_MAX, Math.floor(d / 7));
+  d -= everyWeeks * 7;
+  const everyDays = d;
+  return { everyYears, everyMonths, everyWeeks, everyDays };
 }

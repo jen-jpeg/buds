@@ -10,7 +10,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { seeEveryDaysToYMW } from "../lib/bud-care";
+import { intervalTotalDays, seeEveryDaysToYMW } from "../lib/bud-care";
 import flowersData from "../data/flowers.json";
 import type { BudDisplay } from "./flower";
 import isMobile from "../hooks/is-mobile";
@@ -30,11 +30,12 @@ type FlowerAddCardProps = {
 
 type FlowerOption = (typeof flowersData.flowers)[number];
 
-type IntervalAssist = "years" | "weeks" | "months" | null;
+type IntervalAssist = "years" | "weeks" | "months" | "days" | null;
 
 const YEARS_MAX = 20;
 const WEEKS_MAX = 52;
 const MONTHS_MAX = 12;
+const DAYS_MAX = 7;
 
 function clampYears(n: number) {
   return Math.min(YEARS_MAX, Math.max(0, Math.floor(Number.isFinite(n) ? n : 0)));
@@ -48,6 +49,10 @@ function clampMonths(n: number) {
   return Math.min(MONTHS_MAX, Math.max(0, Math.floor(Number.isFinite(n) ? n : 0)));
 }
 
+function clampDays(n: number) {
+  return Math.min(DAYS_MAX, Math.max(0, Math.floor(Number.isFinite(n) ? n : 0)));
+}
+
 export default function FlowerAddCard({
   onAdd,
   editTarget = null,
@@ -59,6 +64,7 @@ export default function FlowerAddCard({
   const yearsSliderId = `${panelId}-years-slider`;
   const weeksSliderId = `${panelId}-weeks-slider`;
   const monthsSliderId = `${panelId}-months-slider`;
+  const daysSliderId = `${panelId}-days-slider`;
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   /** Whole years (365 days each when totaling). */
@@ -67,6 +73,8 @@ export default function FlowerAddCard({
   const [everyWeeks, setEveryWeeks] = useState(0);
   /** Whole months (30 days each when totaling). */
   const [everyMonths, setEveryMonths] = useState(0);
+  /** Raw day count added to the interval total. */
+  const [everyDays, setEveryDays] = useState(0);
   const [intervalAssist, setIntervalAssist] = useState<IntervalAssist>(null);
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -74,6 +82,7 @@ export default function FlowerAddCard({
   const yearsFieldRef = useRef<HTMLDivElement>(null);
   const weeksFieldRef = useRef<HTMLDivElement>(null);
   const monthsFieldRef = useRef<HTMLDivElement>(null);
+  const daysFieldRef = useRef<HTMLDivElement>(null);
   const flowerScrollRef = useRef<HTMLDivElement>(null);
   const [flowerFadeLeft, setFlowerFadeLeft] = useState(false);
   const [flowerFadeRight, setFlowerFadeRight] = useState(false);
@@ -118,8 +127,14 @@ export default function FlowerAddCard({
   }, []);
 
   const seeEveryDays = useMemo(
-    () => everyYears * 365 + everyWeeks * 7 + everyMonths * 30,
-    [everyYears, everyWeeks, everyMonths],
+    () =>
+      intervalTotalDays({
+        everyDays,
+        everyYears,
+        everyWeeks,
+        everyMonths,
+      }),
+    [everyDays, everyYears, everyWeeks, everyMonths],
   );
 
   const selectedFlower: FlowerOption | undefined = flowersData.flowers.find(
@@ -131,6 +146,7 @@ export default function FlowerAddCard({
     setEveryYears(0);
     setEveryWeeks(0);
     setEveryMonths(0);
+    setEveryDays(0);
     setIntervalAssist(null);
     setSelectedKey(null);
     setOpen(false);
@@ -144,6 +160,7 @@ export default function FlowerAddCard({
     setEveryYears(ymw.everyYears);
     setEveryWeeks(ymw.everyWeeks);
     setEveryMonths(ymw.everyMonths);
+    setEveryDays(ymw.everyDays);
     const match = flowersData.flowers.find(
       (f) => f.state.healthy === editTarget.healthyImage,
     );
@@ -171,6 +188,7 @@ export default function FlowerAddCard({
     if (!open || intervalAssist === null) return;
     const onPointerDown = (e: PointerEvent) => {
       const t = e.target as Node;
+      if (daysFieldRef.current?.contains(t)) return;
       if (weeksFieldRef.current?.contains(t)) return;
       if (monthsFieldRef.current?.contains(t)) return;
       if (yearsFieldRef.current?.contains(t)) return;
@@ -375,7 +393,54 @@ export default function FlowerAddCard({
                 <legend className="mb-0.5 font-medium text-neutral-800">
                   See every
                 </legend>
-                <div className="grid grid-cols-3 gap-2 sm:gap-3">
+                <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
+                  <div ref={daysFieldRef} className="flex min-w-0 flex-col gap-1">
+                    <label className="flex flex-col gap-1">
+                      <span className="text-neutral-600">Days</span>
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        autoComplete="off"
+                        aria-expanded={intervalAssist === "days"}
+                        aria-controls={
+                          intervalAssist === "days" ? daysSliderId : undefined
+                        }
+                        value={String(everyDays)}
+                        onClick={() => setIntervalAssist("days")}
+                        onFocus={() => setIntervalAssist("days")}
+                        onChange={(e) => {
+                          const digits = e.target.value.replace(/\D/g, "");
+                          if (digits === "") {
+                            setEveryDays(0);
+                            return;
+                          }
+                          setEveryDays(clampDays(Number.parseInt(digits, 10)));
+                        }}
+                        onBlur={() => {
+                          setEveryDays((d) => clampDays(d));
+                        }}
+                        className="w-full min-w-0 rounded-md border border-neutral-200 px-2 py-2 tabular-nums text-neutral-900 outline-none ring-emerald-500/0 transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 sm:px-3"
+                      />
+                    </label>
+                    {intervalAssist === "days" ? (
+                      <input
+                        id={daysSliderId}
+                        type="range"
+                        min={0}
+                        max={DAYS_MAX}
+                        step={1}
+                        value={everyDays}
+                        onChange={(e) =>
+                          setEveryDays(Number.parseInt(e.target.value, 10))
+                        }
+                        className="w-full accent-emerald-600"
+                        aria-valuemin={0}
+                        aria-valuemax={DAYS_MAX}
+                        aria-valuenow={everyDays}
+                        aria-label="Adjust days"
+                      />
+                    ) : null}
+                  </div>
                   <div ref={weeksFieldRef} className="flex min-w-0 flex-col gap-1">
                     <label className="flex flex-col gap-1">
                       <span className="text-neutral-600">Weeks</span>
@@ -539,7 +604,7 @@ export default function FlowerAddCard({
                   {seeEveryDays < 1 ? (
                     <span className="text-amber-700">
                       {" "}
-                      — increase weeks, months, or years
+                      — increase days, weeks, months, or years
                     </span>
                   ) : null}
                 </p>
