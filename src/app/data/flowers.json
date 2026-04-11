@@ -33,6 +33,22 @@
       }
     },
     {
+      "name": "calla lily",
+      "state": {
+        "healthy": "/flowers/calla_0.png",
+        "sick": "/flowers/calla_1.png",
+        "joever": "/flowers/calla_2.png"
+      }
+    },
+    {
+      "name": "sunflower",
+      "state": {
+        "healthy": "/flowers/sunflower_0.png",
+        "sick": "/flowers/sunflower_1.png",
+        "joever": "/flowers/sunflower_2.png"
+      }
+    },
+    {
       "name": "purple",
       "state": {
         "healthy": "/flowers/purple_0.png",
