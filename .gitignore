@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+/nodejs/node_modules
 /.pnp
 .pnp.*
 .yarn/*
@@ -40,3 +41,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .env*.local
+android/
+.claude/settings.json
