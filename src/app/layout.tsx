@@ -4,6 +4,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Schoolbell, Pangolin } from "next/font/google";
 import "./globals.css";
 import NavBar from "./components/nav-bar";
+import NodeServerProvider from "./components/node-server-provider";
 
 const schoolbell = Schoolbell({
   weight: ["400"],
@@ -37,7 +38,7 @@ export default function RootLayout({
     > 
       <body className="min-h-full flex flex-col">
         <NavBar />
-        {children}
+        <NodeServerProvider>{children}</NodeServerProvider>
         <Analytics />
         <SpeedInsights />
       </body>
