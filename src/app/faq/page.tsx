@@ -41,7 +41,7 @@ const FAQ_SECTIONS: FaqSection[] = [
         id: "health-scores",
         question: "What do the flowers and health scores mean?",
         answer:
-          "Each bud has a health score from 0–100. Health decreases a little each day based on how often you want to see that friend — roughly 25 points per full interval with no care. Watering, calling, and in-person visits raise health back up. Wilting flowers are a gentle reminder to reach out and maintain that relationship.",
+          "Each bud has a health score from 0–100. Health decreases a little each day based on how often you want to see that friend (about 25% per full interval with no care). Watering, calling, and in-person visits raise health back up. Wilting flowers are a gentle reminder to reach out and maintain that relationship.",
       },
       {
         id: "is-buds-free",
