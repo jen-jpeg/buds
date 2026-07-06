@@ -21,6 +21,17 @@ type FaqSection = {
 
 const SUPPORT_EMAIL = "jpegs.buds@gmail.com";
 
+const EMAIL_LINK_CLASS =
+  "font-medium text-foreground underline decoration-health-bar-sage/60 underline-offset-2 transition hover:text-health-bar-sage";
+
+function SupportEmailLink() {
+  return (
+    <a href={`mailto:${SUPPORT_EMAIL}`} className={EMAIL_LINK_CLASS}>
+      {SUPPORT_EMAIL}
+    </a>
+  );
+}
+
 const FAQ_SECTIONS: FaqSection[] = [
   {
     title: "About Buds",
@@ -64,6 +75,29 @@ const FAQ_SECTIONS: FaqSection[] = [
         question: "Do I need an account?",
         answer:
           "No. Buds does not require a login. Your garden lives directly on your device, but you can export your data.",
+      },
+      {
+        id: "feature-request",
+        question: "Can you add a new feature?",
+        answer: (
+          <>
+            No guarantees, but we&apos;re always open to feedback on how to improve
+            Buds! Use the feedback form on the settings page of the mobile app, or
+            email us at <SupportEmailLink /> with your thoughts.
+          </>
+        ),
+      },
+      {
+        id: "feature-request",
+        question: "Can you add a new flower type?",
+        answer: (
+          <>
+            New flower types will be added over time for Buds
+            Pro users. Feel free to request a new flower type in the feedback form on the
+            settings page of the mobile app, or email us at <SupportEmailLink />{" "}
+            with your thoughts.
+          </>
+        ),
       },
     ],
   },
@@ -172,14 +206,8 @@ const FAQ_SECTIONS: FaqSection[] = [
         question: "How do I contact support?",
         answer: (
           <>
-            Send an email to{" "}
-            <a
-              href={`mailto:${SUPPORT_EMAIL}`}
-              className="font-medium text-foreground underline decoration-health-bar-sage/60 underline-offset-2 transition hover:text-health-bar-sage"
-            >
-              {SUPPORT_EMAIL}
-            </a>
-            . We'll try to get back to you as soon as possible.
+            Send an email to <SupportEmailLink />. We&apos;ll try to get back to you
+            as soon as possible.
           </>
         ),
       },
