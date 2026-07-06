@@ -131,23 +131,18 @@ const FAQ_SECTIONS: FaqSection[] = [
             hangouts, which boosts bud health the most.
           </>
         ),
-      }
-    ],
-  },
-  {
-    title: "Notifications and widgets",
-    items: [
+      },
       {
         id: "notification-permission",
         question: "Why does Buds need notification permission?",
         answer:
-          "Only for local reminders you choose — for example, nudges to water a bud or follow up on a planned hangout. Buds does not send remote push notifications from a server in the current version.",
+          "Buds can send local reminders of plans with your buds, or important dates coming up. Notifications are not sent from a server, but scheduled on your device when you use the app.",
       },
       {
         id: "home-screen-widget",
         question: "What appears on the home screen widget?",
         answer:
-          "The iOS widget shows a snapshot of your garden — friend names and health — so you can glance at who might need care. Widget data is written locally by the app. Remove the widget anytime from your home screen like any other widget.",
+          "Home screen widgets shows a snapshot of your garden: friends, health, and any plans or important dates today. The displayed buds are the first buds in your garden, which you can reorder within the app.",
       },
     ],
   },
