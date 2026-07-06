@@ -163,9 +163,9 @@ const FAQ_SECTIONS: FaqSection[] = [
       },
       {
         id: "lost-data-reinstall",
-        question: "I lost my data after reinstalling — can you recover it?",
+        question: "I lost my data, can you recover it?",
         answer:
-          "Your data only lives on your device, so we cannot restore your garden from our side. If you exported JSON from the website before reinstalling, paste it back into the app. Regular exports are the best safety net.",
+          "Your data only lives on your device, so we cannot restore your garden from our side. If you exported data from the website or mobile app, you can paste that to import it back into the mobile app.",
       },
       {
         id: "contact-support",
