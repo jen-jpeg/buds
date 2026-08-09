@@ -1,17 +1,32 @@
 "use client";
 
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import AboutPopup from "./about-popup";
 import JsonEditorPopup from "./json-editor-popup";
 
+const HOME_LINK_PATHS = new Set(["/faq", "/privacy", "/terms"]);
+
 export default function NavBar() {
+  const pathname = usePathname();
   const [aboutOpen, setAboutOpen] = useState(false);
   const [jsonOpen, setJsonOpen] = useState(false);
+  const showHomeLink = HOME_LINK_PATHS.has(pathname);
 
   return (
     <>
       <div className="flex justify-between items-center my-[1.5rem] mx-[7%] max-w-[80vw]">
-        <h1 className="text-[1.8rem] font-bold">buds ✿</h1>
+        {showHomeLink ? (
+          <Link
+            href="/"
+            className="text-[1.8rem] font-bold text-foreground transition hover:text-health-bar-sage"
+          >
+            buds ✿
+          </Link>
+        ) : (
+          <h1 className="text-[1.8rem] font-bold">buds ✿</h1>
+        )}
         <div className="flex items-center gap-4 md:gap-6">
           <button
             type="button"
